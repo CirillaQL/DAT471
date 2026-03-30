@@ -78,7 +78,19 @@ else
       clock_frequency="Unknown"
     fi
   else
-    clock_frequency="Unknown"
+    proc_freqs=$(awk '
+      /^cpu MHz[[:space:]]*:/ {
+        value = $4
+        if (min == "" || value < min) min = value
+        if (max == "" || value > max) max = value
+      }
+      END {
+        if (min != "" && max != "") printf "min %.3f MHz, max %.3f MHz", min, max
+        else print "Unknown"
+      }
+    ' /proc/cpuinfo 2>/dev/null || true)
+
+    clock_frequency=${proc_freqs:-Unknown}
   fi
 fi
 
