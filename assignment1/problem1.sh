@@ -31,6 +31,36 @@ get_lscpu_value() {
   printf '%s\n' "Unknown"
 }
 
+get_cpu_freq_from_sysfs() {
+  local sysfs_field=$1
+  local file
+  local min_value=""
+  local max_value=""
+  local raw_value
+  local mhz_value
+
+  for file in /sys/devices/system/cpu/cpu[0-9]*/cpufreq/"$sysfs_field"; do
+    [[ -f "$file" ]] || continue
+    raw_value=$(<"$file")
+    [[ "$raw_value" =~ ^[0-9]+$ ]] || continue
+    mhz_value=$(awk "BEGIN {printf \"%.3f\", $raw_value / 1000}")
+
+    if [[ -z "$min_value" ]] || awk "BEGIN {exit !($mhz_value < $min_value)}"; then
+      min_value=$mhz_value
+    fi
+
+    if [[ -z "$max_value" ]] || awk "BEGIN {exit !($mhz_value > $max_value)}"; then
+      max_value=$mhz_value
+    fi
+  done
+
+  if [[ -n "$min_value" && -n "$max_value" ]]; then
+    printf '%s\n' "$min_value $max_value"
+  else
+    printf '%s\n' "Unknown Unknown"
+  fi
+}
+
 model=${lscpu_fields["Model name"]:-Unknown}
 nominal_clock_mhz=$(get_lscpu_value "CPU max MHz" "Max MHz")
 current_clock_mhz=$(get_lscpu_value "CPU MHz" "Current MHz")
@@ -81,12 +111,37 @@ fi
 
 if [[ "$nominal_clock_mhz" != "Unknown" ]]; then
   clock_frequency="$nominal_clock_mhz MHz"
-elif [[ "$min_clock_mhz" != "Unknown" || "$max_clock_mhz" != "Unknown" ]]; then
+elif [[ "$min_clock_mhz" != "Unknown" && "$max_clock_mhz" != "Unknown" ]]; then
   clock_frequency="min ${min_clock_mhz} MHz, max ${max_clock_mhz} MHz"
 elif [[ "$current_clock_mhz" != "Unknown" ]]; then
   clock_frequency="$current_clock_mhz MHz"
 else
-  clock_frequency="Unknown"
+  read -r sysfs_min_clock_mhz sysfs_max_clock_mhz <<< "$(get_cpu_freq_from_sysfs scaling_cur_freq)"
+
+  if [[ "$sysfs_min_clock_mhz" != "Unknown" && "$sysfs_max_clock_mhz" != "Unknown" ]]; then
+    clock_frequency="min ${sysfs_min_clock_mhz} MHz, max ${sysfs_max_clock_mhz} MHz"
+  else
+    proc_cpu_mhz_range=$(awk '
+      /^cpu MHz[[:space:]]*:/ {
+        value = $4
+        if (count == 0 || value < min) min = value
+        if (count == 0 || value > max) max = value
+        count++
+      }
+      END {
+        if (count > 0) printf "%.3f %.3f\n", min, max
+        else print "Unknown Unknown"
+      }
+    ' /proc/cpuinfo)
+
+    read -r proc_min_clock_mhz proc_max_clock_mhz <<< "$proc_cpu_mhz_range"
+
+    if [[ "$proc_min_clock_mhz" != "Unknown" && "$proc_max_clock_mhz" != "Unknown" ]]; then
+      clock_frequency="min ${proc_min_clock_mhz} MHz, max ${proc_max_clock_mhz} MHz"
+    else
+      clock_frequency="Unknown"
+    fi
+  fi
 fi
 
 
