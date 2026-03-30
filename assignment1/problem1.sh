@@ -2,7 +2,6 @@
 
 set -euo pipefail
 
-# Collect CPU information and deserialize "key: value" lines into a map.
 cpu_info=$(lscpu)
 declare -A lscpu_fields
 
@@ -18,64 +17,17 @@ while IFS= read -r line; do
   lscpu_fields["$key"]="$value"
 done <<< "$cpu_info"
 
-get_lscpu_value() {
-  local field_name
-
-  for field_name in "$@"; do
-    if [[ -n "${lscpu_fields[$field_name]:-}" ]]; then
-      printf '%s\n' "${lscpu_fields[$field_name]}"
-      return 0
-    fi
-  done
-
-  printf '%s\n' "Unknown"
-}
-
-get_cpu_freq_from_sysfs() {
-  local sysfs_field=$1
-  local file
-  local min_value=""
-  local max_value=""
-  local raw_value
-  local mhz_value
-
-  for file in /sys/devices/system/cpu/cpu[0-9]*/cpufreq/"$sysfs_field"; do
-    [[ -f "$file" ]] || continue
-    raw_value=$(<"$file")
-    [[ "$raw_value" =~ ^[0-9]+$ ]] || continue
-    mhz_value=$(awk "BEGIN {printf \"%.3f\", $raw_value / 1000}")
-
-    if [[ -z "$min_value" ]] || awk "BEGIN {exit !($mhz_value < $min_value)}"; then
-      min_value=$mhz_value
-    fi
-
-    if [[ -z "$max_value" ]] || awk "BEGIN {exit !($mhz_value > $max_value)}"; then
-      max_value=$mhz_value
-    fi
-  done
-
-  if [[ -n "$min_value" && -n "$max_value" ]]; then
-    printf '%s\n' "$min_value $max_value"
-  else
-    printf '%s\n' "Unknown Unknown"
-  fi
-}
-
 model=${lscpu_fields["Model name"]:-Unknown}
-nominal_clock_mhz=$(get_lscpu_value "CPU max MHz" "Max MHz")
-current_clock_mhz=$(get_lscpu_value "CPU MHz" "Current MHz")
-min_clock_mhz=$(get_lscpu_value "CPU min MHz" "Min MHz")
-max_clock_mhz=$(get_lscpu_value "CPU max MHz" "Max MHz")
-sockets=$(get_lscpu_value "Socket(s)")
-cores_per_socket=$(get_lscpu_value "Core(s) per socket")
-hardware_threads=$(get_lscpu_value "CPU(s)")
+sockets=${lscpu_fields["Socket(s)"]:-0}
+cores_per_socket=${lscpu_fields["Core(s) per socket"]:-0}
+hardware_threads=${lscpu_fields["CPU(s)"]:-0}
 total_cores=$((sockets * cores_per_socket))
 architecture=${lscpu_fields["Architecture"]:-Unknown}
 cache_line_length=$(getconf LEVEL1_DCACHE_LINESIZE)
-l1d_cache=$(get_lscpu_value "L1d" "L1d cache")
-l1i_cache=$(get_lscpu_value "L1i" "L1i cache")
-l2_cache=$(get_lscpu_value "L2" "L2 cache")
-l3_cache=$(get_lscpu_value "L3" "L3 cache")
+l1d_cache=${lscpu_fields["L1d cache"]:-${lscpu_fields["L1d"]:-Unknown}}
+l1i_cache=${lscpu_fields["L1i cache"]:-${lscpu_fields["L1i"]:-Unknown}}
+l2_cache=${lscpu_fields["L2 cache"]:-${lscpu_fields["L2"]:-Unknown}}
+l3_cache=${lscpu_fields["L3 cache"]:-${lscpu_fields["L3"]:-Unknown}}
 gpu_count=0
 gpu_models="Unknown"
 gpu_memory="Unknown"
@@ -109,38 +61,18 @@ if command -v nvidia-smi >/dev/null 2>&1; then
   fi
 fi
 
-if [[ "$nominal_clock_mhz" != "Unknown" ]]; then
-  clock_frequency="$nominal_clock_mhz MHz"
-elif [[ "$min_clock_mhz" != "Unknown" && "$max_clock_mhz" != "Unknown" ]]; then
-  clock_frequency="min ${min_clock_mhz} MHz, max ${max_clock_mhz} MHz"
-elif [[ "$current_clock_mhz" != "Unknown" ]]; then
-  clock_frequency="$current_clock_mhz MHz"
+if [[ -n "${lscpu_fields["CPU max MHz"]:-}" ]]; then
+  clock_frequency="${lscpu_fields["CPU max MHz"]} MHz"
+elif [[ -n "${lscpu_fields["Max MHz"]:-}" ]]; then
+  clock_frequency="${lscpu_fields["Max MHz"]} MHz"
 else
-  read -r sysfs_min_clock_mhz sysfs_max_clock_mhz <<< "$(get_cpu_freq_from_sysfs scaling_cur_freq)"
+  min_clock=$(awk 'BEGIN {min=""} {if (min=="" || $1 < min) min=$1} END {print min}' /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq 2>/dev/null)
+  max_clock=$(awk 'BEGIN {max=0} {if ($1 > max) max=$1} END {print max}' /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq 2>/dev/null)
 
-  if [[ "$sysfs_min_clock_mhz" != "Unknown" && "$sysfs_max_clock_mhz" != "Unknown" ]]; then
-    clock_frequency="min ${sysfs_min_clock_mhz} MHz, max ${sysfs_max_clock_mhz} MHz"
+  if [[ -n "$min_clock" && -n "$max_clock" && "$min_clock" != "0" && "$max_clock" != "0" ]]; then
+    clock_frequency="min $(awk "BEGIN {printf \"%.3f\", $min_clock / 1000}") MHz, max $(awk "BEGIN {printf \"%.3f\", $max_clock / 1000}") MHz"
   else
-    proc_cpu_mhz_range=$(awk '
-      /^cpu MHz[[:space:]]*:/ {
-        value = $4
-        if (count == 0 || value < min) min = value
-        if (count == 0 || value > max) max = value
-        count++
-      }
-      END {
-        if (count > 0) printf "%.3f %.3f\n", min, max
-        else print "Unknown Unknown"
-      }
-    ' /proc/cpuinfo)
-
-    read -r proc_min_clock_mhz proc_max_clock_mhz <<< "$proc_cpu_mhz_range"
-
-    if [[ "$proc_min_clock_mhz" != "Unknown" && "$proc_max_clock_mhz" != "Unknown" ]]; then
-      clock_frequency="min ${proc_min_clock_mhz} MHz, max ${proc_max_clock_mhz} MHz"
-    else
-      clock_frequency="Unknown"
-    fi
+    clock_frequency="Unknown"
   fi
 fi
 
