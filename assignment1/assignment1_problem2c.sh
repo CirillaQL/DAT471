@@ -15,5 +15,4 @@ apptainer exec \
   --bind "${SLURM_SUBMIT_DIR}:${SLURM_SUBMIT_DIR}" \
   "$CONTAINER" \
   python3 "$SCRIPT_PATH"
-EOF
 

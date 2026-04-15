@@ -7,26 +7,17 @@
 
 set -euo pipefail
 
-JOB_DIR="${SLURM_SUBMIT_DIR:-$(pwd)}"
-cd "$JOB_DIR"
+CONTAINER="/data/courses/2026_dat471_dit066/containers/assignment1.sif"
+DATASET="/data/courses/2026_dat471_dit066/datasets/bike_sharing_hourly.csv"
 
-export JOB_DIR
+apptainer exec \
+  --bind /data:/data \
+  "$CONTAINER" \
+  bash -c "
+    echo '=== Running mystery.py ==='
+    python3 /opt/mystery.py \"$DATASET\"
 
-apptainer exec --bind "$JOB_DIR:$JOB_DIR" --bind /data:/data "$JOB_DIR/assignment1.sif" bash -s <<'EOF'
-set -euo pipefail
-
-dataset="/data/courses/2026_dat471_dit066/datasets/bike_sharing_hourly.csv"
-
-if [[ ! -f "$dataset" ]]; then
-  echo "Could not find the bike sharing dataset: $dataset"
-  exit 1
-fi
-
-echo "Using dataset: $dataset"
-echo
-echo "Output from /opt/mystery.py:"
-python3 /opt/mystery.py "$dataset"
-echo
-echo "Contents of /opt/mystery.py:"
-cat /opt/mystery.py
-EOF
+    echo
+    echo '=== mystery.py source ==='
+    cat /opt/mystery.py
+  "
