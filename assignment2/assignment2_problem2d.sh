@@ -9,7 +9,7 @@
 set -euo pipefail
 
 CONTAINER="/data/courses/2026_dat471_dit066/containers/assignment2.sif"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="${SLURM_SUBMIT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 SCRIPT_PATH="${SCRIPT_DIR}/assignment2_problem2d.py"
 DATASET_PATH="/data/courses/2026_dat471_dit066/datasets/gutenberg/huge"
 RESULT_DIR="${SCRIPT_DIR}/assignment2_problem2d_results"
