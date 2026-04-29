@@ -1,0 +1,78 @@
+===== workers=1 =====
+workers=1
+cpus_per_task=3
+batch_size=10
+dataset=/data/courses/2026_dat471_dit066/datasets/gutenberg/huge
+Time for feeding filenames: 0.25 seconds
+Time for counting, merging, and computing results: 850.55 seconds
+Checksum: 14880058115
+Total time: 850.86 seconds
+Speedup compared with 1 worker: 1.000000
+
+===== workers=2 =====
+workers=2
+cpus_per_task=4
+batch_size=10
+dataset=/data/courses/2026_dat471_dit066/datasets/gutenberg/huge
+Time for feeding filenames: 0.27 seconds
+Time for counting, merging, and computing results: 471.14 seconds
+Checksum: 14880058115
+Total time: 471.47 seconds
+Speedup compared with 1 worker: 1.804696
+
+===== workers=4 =====
+workers=4
+cpus_per_task=6
+batch_size=10
+dataset=/data/courses/2026_dat471_dit066/datasets/gutenberg/huge
+Time for feeding filenames: 0.22 seconds
+Time for counting, merging, and computing results: 359.16 seconds
+Checksum: 14880058115
+Total time: 359.43 seconds
+Speedup compared with 1 worker: 2.367248
+
+===== workers=8 =====
+workers=8
+cpus_per_task=10
+batch_size=10
+dataset=/data/courses/2026_dat471_dit066/datasets/gutenberg/huge
+Time for feeding filenames: 0.22 seconds
+Time for counting, merging, and computing results: 339.22 seconds
+Checksum: 14880058115
+Total time: 339.50 seconds
+Speedup compared with 1 worker: 2.506215
+
+===== workers=16 =====
+workers=16
+cpus_per_task=18
+batch_size=10
+dataset=/data/courses/2026_dat471_dit066/datasets/gutenberg/huge
+Time for feeding filenames: 0.20 seconds
+Time for counting, merging, and computing results: 317.92 seconds
+Checksum: 14880058115
+Total time: 318.18 seconds
+Speedup compared with 1 worker: 2.674147
+
+===== workers=32 =====
+workers=32
+cpus_per_task=34
+batch_size=10
+dataset=/data/courses/2026_dat471_dit066/datasets/gutenberg/huge
+Time for feeding filenames: 0.31 seconds
+Time for counting, merging, and computing results: 292.32 seconds
+Checksum: 14880058115
+Total time: 292.69 seconds
+Speedup compared with 1 worker: 2.907035
+
+===== workers=64 =====
+workers=64
+cpus_per_task=66
+batch_size=10
+dataset=/data/courses/2026_dat471_dit066/datasets/gutenberg/huge
+Time for feeding filenames: 0.28 seconds
+Time for counting, merging, and computing results: 258.50 seconds
+Checksum: 14880058115
+Total time: 258.83 seconds
+Speedup compared with 1 worker: 3.287331
+Total absolute running time with 64 cores: 258.83 seconds
+

@@ -1,0 +1,91 @@
+===== workers=1 =====
+workers=1
+cpus_per_task=1
+batch_size=10
+dataset=/data/courses/2026_dat471_dit066/datasets/gutenberg/huge
+Time for reading files: 41.84 seconds
+Time for counting words in files: 776.61 seconds
+Time for merging counts: 150.70 seconds
+Time for getting top10: 34.03 seconds
+Time for computing checksum: 3.28 seconds
+Checksum: 14880058115
+Total time: 1006.46 seconds
+
+===== workers=2 =====
+workers=2
+cpus_per_task=2
+batch_size=10
+dataset=/data/courses/2026_dat471_dit066/datasets/gutenberg/huge
+Time for reading files: 42.85 seconds
+Time for counting words in files: 622.31 seconds
+Time for merging counts: 168.25 seconds
+Time for getting top10: 34.08 seconds
+Time for computing checksum: 3.35 seconds
+Checksum: 14880058115
+Total time: 870.84 seconds
+
+===== workers=4 =====
+workers=4
+cpus_per_task=4
+batch_size=10
+dataset=/data/courses/2026_dat471_dit066/datasets/gutenberg/huge
+Time for reading files: 44.60 seconds
+Time for counting words in files: 349.14 seconds
+Time for merging counts: 251.50 seconds
+Time for getting top10: 36.35 seconds
+Time for computing checksum: 3.32 seconds
+Checksum: 14880058115
+Total time: 684.91 seconds
+
+===== workers=8 =====
+workers=8
+cpus_per_task=8
+batch_size=10
+dataset=/data/courses/2026_dat471_dit066/datasets/gutenberg/huge
+Time for reading files: 44.48 seconds
+Time for counting words in files: 198.00 seconds
+Time for merging counts: 262.54 seconds
+Time for getting top10: 49.22 seconds
+Time for computing checksum: 4.00 seconds
+Checksum: 14880058115
+Total time: 558.27 seconds
+
+===== workers=16 =====
+workers=16
+cpus_per_task=16
+batch_size=10
+dataset=/data/courses/2026_dat471_dit066/datasets/gutenberg/huge
+Time for reading files: 48.64 seconds
+Time for counting words in files: 148.82 seconds
+Time for merging counts: 275.31 seconds
+Time for getting top10: 51.68 seconds
+Time for computing checksum: 4.12 seconds
+Checksum: 14880058115
+Total time: 528.58 seconds
+
+===== workers=32 =====
+workers=32
+cpus_per_task=32
+batch_size=10
+dataset=/data/courses/2026_dat471_dit066/datasets/gutenberg/huge
+Time for reading files: 43.30 seconds
+Time for counting words in files: 118.04 seconds
+Time for merging counts: 140.40 seconds
+Time for getting top10: 33.08 seconds
+Time for computing checksum: 3.33 seconds
+Checksum: 14880058115
+Total time: 338.15 seconds
+
+===== workers=64 =====
+workers=64
+cpus_per_task=64
+batch_size=10
+dataset=/data/courses/2026_dat471_dit066/datasets/gutenberg/huge
+Time for reading files: 40.22 seconds
+Time for counting words in files: 142.80 seconds
+Time for merging counts: 139.83 seconds
+Time for getting top10: 33.08 seconds
+Time for computing checksum: 3.27 seconds
+Checksum: 14880058115
+Total time: 359.20 seconds
+

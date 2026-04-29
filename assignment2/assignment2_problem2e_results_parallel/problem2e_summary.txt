@@ -1,0 +1,99 @@
+===== workers=1 =====
+workers=1
+cpus_per_task=1
+batch_size=10
+dataset=/data/courses/2026_dat471_dit066/datasets/gutenberg/huge
+Time for listing files: 0.15 seconds
+Time for reading and counting words in files: 721.74 seconds
+Time for merging counts: 145.28 seconds
+Time for getting top10: 33.54 seconds
+Time for computing checksum: 3.31 seconds
+Checksum: 14880058115
+Total time: 904.03 seconds
+Speedup compared with 1 worker: 1.000000
+
+===== workers=2 =====
+workers=2
+cpus_per_task=2
+batch_size=10
+dataset=/data/courses/2026_dat471_dit066/datasets/gutenberg/huge
+Time for listing files: 0.19 seconds
+Time for reading and counting words in files: 555.60 seconds
+Time for merging counts: 168.23 seconds
+Time for getting top10: 33.94 seconds
+Time for computing checksum: 3.21 seconds
+Checksum: 14880058115
+Total time: 761.16 seconds
+Speedup compared with 1 worker: 1.187700
+
+===== workers=4 =====
+workers=4
+cpus_per_task=4
+batch_size=10
+dataset=/data/courses/2026_dat471_dit066/datasets/gutenberg/huge
+Time for listing files: 0.19 seconds
+Time for reading and counting words in files: 294.95 seconds
+Time for merging counts: 191.44 seconds
+Time for getting top10: 34.40 seconds
+Time for computing checksum: 3.31 seconds
+Checksum: 14880058115
+Total time: 524.29 seconds
+Speedup compared with 1 worker: 1.724294
+
+===== workers=8 =====
+workers=8
+cpus_per_task=8
+batch_size=10
+dataset=/data/courses/2026_dat471_dit066/datasets/gutenberg/huge
+Time for listing files: 0.15 seconds
+Time for reading and counting words in files: 169.31 seconds
+Time for merging counts: 189.16 seconds
+Time for getting top10: 35.88 seconds
+Time for computing checksum: 3.45 seconds
+Checksum: 14880058115
+Total time: 397.95 seconds
+Speedup compared with 1 worker: 2.271718
+
+===== workers=16 =====
+workers=16
+cpus_per_task=16
+batch_size=10
+dataset=/data/courses/2026_dat471_dit066/datasets/gutenberg/huge
+Time for listing files: 0.19 seconds
+Time for reading and counting words in files: 113.89 seconds
+Time for merging counts: 192.59 seconds
+Time for getting top10: 34.79 seconds
+Time for computing checksum: 3.33 seconds
+Checksum: 14880058115
+Total time: 344.79 seconds
+Speedup compared with 1 worker: 2.621973
+
+===== workers=32 =====
+workers=32
+cpus_per_task=32
+batch_size=10
+dataset=/data/courses/2026_dat471_dit066/datasets/gutenberg/huge
+Time for listing files: 0.19 seconds
+Time for reading and counting words in files: 98.75 seconds
+Time for merging counts: 193.08 seconds
+Time for getting top10: 34.54 seconds
+Time for computing checksum: 3.29 seconds
+Checksum: 14880058115
+Total time: 329.84 seconds
+Speedup compared with 1 worker: 2.740814
+
+===== workers=64 =====
+workers=64
+cpus_per_task=64
+batch_size=10
+dataset=/data/courses/2026_dat471_dit066/datasets/gutenberg/huge
+Time for listing files: 0.18 seconds
+Time for reading and counting words in files: 75.54 seconds
+Time for merging counts: 140.74 seconds
+Time for getting top10: 33.92 seconds
+Time for computing checksum: 3.26 seconds
+Checksum: 14880058115
+Total time: 253.64 seconds
+Speedup compared with 1 worker: 3.564225
+Total absolute running time with 64 cores: 253.64 seconds
+

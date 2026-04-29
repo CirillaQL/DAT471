@@ -1,0 +1,24 @@
+workers=4
+cpus_per_task=6
+batch_size=10
+dataset=/data/courses/2026_dat471_dit066/datasets/gutenberg/huge
+started_at=2026-04-27T10:24:10+02:00
+
+Time for feeding filenames: 0.22 seconds
+Number of files: 47121
+Time for counting, merging, and computing results: 359.16 seconds
+Checksum: 14880058115
+Top 10:
+the: 148499457
+of: 89408738
+and: 72120653
+to: 61762640
+a: 51211506
+in: 44714455
+that: 24646774
+was: 24224366
+is: 19939759
+I: 19103566
+Total time: 359.43 seconds
+
+finished_at=2026-04-27T10:30:10+02:00

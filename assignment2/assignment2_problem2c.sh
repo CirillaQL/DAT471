@@ -14,4 +14,4 @@ apptainer exec \
   --bind /data:/data \
   --bind "${SLURM_SUBMIT_DIR}:${SLURM_SUBMIT_DIR}" \
   "$CONTAINER" \
-  python3 "$SCRIPT_PATH" /data/courses/2026_dat471_dit066/datasets/gutenberg 
+  python3 "$SCRIPT_PATH" /data/courses/2026_dat471_dit066/datasets/gutenberg/huge
