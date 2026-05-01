@@ -7,7 +7,7 @@ set -euo pipefail
 CONTAINER="/data/courses/2026_dat471_dit066/containers/assignment3.sif"
 SCRIPT_DIR="${ASSIGNMENT3_DIR:-/data/users/luqia/DAT471/assignment3}"
 SCRIPT_PATH="${SCRIPT_DIR}/mrjob_twitter_measure.py"
-DATASET_PATH="${DATASET_PATH:-/data/courses/2026_dat471_dit066/datasets/twitter/twitter_10M.txt}"
+DATASET_PATH="${DATASET_PATH:-/data/courses/2026_dat471_dit066/datasets/twitter/twitter-2010_10M.txt}"
 RESULT_DIR="${SCRIPT_DIR}/assignment3_problem3_results_parallel"
 WORKERS="${WORKERS:?WORKERS is not set}"
 

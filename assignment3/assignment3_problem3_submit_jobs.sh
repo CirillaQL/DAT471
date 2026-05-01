@@ -6,7 +6,7 @@ SCRIPT_DIR="${ASSIGNMENT3_DIR:-/data/users/luqia/DAT471/assignment3}"
 JOB_SCRIPT="${SCRIPT_DIR}/assignment3_problem3_job.sh"
 COLLECT_SCRIPT="${SCRIPT_DIR}/assignment3_problem3_collect_results.sh"
 RESULT_DIR="${SCRIPT_DIR}/assignment3_problem3_results_parallel"
-DATASET_PATH="${DATASET_PATH:-/data/courses/2026_dat471_dit066/datasets/twitter/twitter_10M.txt}"
+DATASET_PATH="${DATASET_PATH:-/data/courses/2026_dat471_dit066/datasets/twitter/twitter-2010_10M.txt}"
 WORKERS=(1 2 4 8 16 32)
 
 mkdir -p "$RESULT_DIR"
