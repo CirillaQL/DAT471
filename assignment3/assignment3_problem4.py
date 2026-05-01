@@ -40,7 +40,7 @@ class MRJobTwitterFollowers(MRJob):
         if follows_text == "":
             return
 
-        for followed_id_text in follows_text.split(","):
+        for followed_id_text in follows_text.replace(",", " ").split():
             followed_id_text = followed_id_text.strip()
             if followed_id_text:
                 yield int(followed_id_text), 1
