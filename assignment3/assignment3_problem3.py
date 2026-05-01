@@ -25,7 +25,9 @@ class MRJobTwitterFollows(MRJob):
             follows_count = 0
         else:
             follows_count = sum(
-                1 for follow_id in follows_text.split(",") if follow_id.strip()
+                1
+                for follow_id in follows_text.replace(",", " ").split()
+                if follow_id.strip()
             )
 
         yield None, (user_id, follows_count, 1, follows_count, int(follows_count == 0))
