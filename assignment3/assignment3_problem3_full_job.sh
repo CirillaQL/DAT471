@@ -3,7 +3,7 @@
 #SBATCH --job-name=assignment3_p3_full
 #SBATCH --output=assignment3_problem3_full.out
 #SBATCH --error=assignment3_problem3_full.err
-#SBATCH --time=04:00:00
+#SBATCH --time=00:30:00
 #SBATCH --cpus-per-task=32
 
 set -euo pipefail
