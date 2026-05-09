@@ -26,13 +26,13 @@ if __name__ == '__main__':
     pairs = lines.map(lambda x: x.split()).cache()
     outdegrees = pairs.map(lambda x: (x[0], 1)).reduceByKey(lambda a, b: a + b)
     max_pair = outdegrees.max(key=lambda x: x[1])
-    
+
     end = time.time()
     
     total_time = end - start
 
     # the first ??? should be the twitter id
-    print(f'max follows: ??? follows ???')
+    print(f'max follows: {max_pair[0]}    follows {max_pair[1]}')
     print(f'users follow on average: ???')
     print(f'number of user who follow no-one: ???')
     print(f'num workers: {args.num_workers}')
