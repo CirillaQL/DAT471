@@ -19,13 +19,20 @@ if __name__ == '__main__':
 
     lines = sc.textFile(args.filename)
 
-    # fill in your code here
-    # raise NotImplementedError()
+    def parse_follows(line):
+        user_id_text, follows_text = line.split(":", 1)
+        follows = follows_text.replace(",", " ").split()
+        return int(user_id_text), len(follows)
 
-    # userA: userB, userC, userD
-    pairs = lines.map(lambda x: x.split()).cache()
-    outdegrees = pairs.map(lambda x: (x[0], 1)).reduceByKey(lambda a, b: a + b)
-    max_pair = outdegrees.max(key=lambda x: x[1])
+    follows_counts = lines.filter(lambda line: line.strip()) \
+        .map(parse_follows) \
+        .cache()
+
+    user_count = follows_counts.count()
+    max_pair = follows_counts.max(key=lambda x: (x[1], -x[0]))
+    total_follows = follows_counts.map(lambda x: x[1]).sum()
+    average_follows = total_follows / user_count if user_count else 0
+    no_follow_count = follows_counts.filter(lambda x: x[1] == 0).count()
 
     end = time.time()
     
@@ -33,8 +40,7 @@ if __name__ == '__main__':
 
     # the first ??? should be the twitter id
     print(f'max follows: {max_pair[0]}    follows {max_pair[1]}')
-    print(f'users follow on average: ???')
-    print(f'number of user who follow no-one: ???')
+    print(f'users follow on average: {average_follows}')
+    print(f'number of user who follow no-one: {no_follow_count}')
     print(f'num workers: {args.num_workers}')
     print(f'total time: {total_time}')
-
