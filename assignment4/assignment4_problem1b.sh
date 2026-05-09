@@ -12,10 +12,7 @@ RESULT_DIR="${RESULT_DIR:-${SCRIPT_DIR}/assignment4_problem1b_results}"
 DATASET_PATH="${DATASET_PATH:-/data/courses/2026_dat471_dit066/datasets/twitter/twitter-2010_10M.txt}"
 CONTAINER="${CONTAINER:-/data/courses/2026_dat471_dit066/containers/assignment4.sif}"
 
-WORKERS=()
-for workers in {1..64}; do
-  WORKERS+=("$workers")
-done
+WORKERS=(1 2 4 8 16 32 64)
 
 run_one() {
   local workers="${1:?workers is required}"
