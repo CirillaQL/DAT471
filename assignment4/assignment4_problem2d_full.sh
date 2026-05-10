@@ -3,8 +3,7 @@
 #SBATCH --job-name=assignment4_p2d_full
 #SBATCH --output=assignment4_problem2d_full.out
 #SBATCH --error=assignment4_problem2d_full.err
-#SBATCH --time=02:00:00
-#SBATCH --mem=64G
+#SBATCH --time=00:30:00
 
 set -euo pipefail
 
