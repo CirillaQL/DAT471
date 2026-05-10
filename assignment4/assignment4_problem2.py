@@ -1,8 +1,9 @@
 import time
 import argparse
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import avg, coalesce, lit, to_date, udf, col, when, year
+from pyspark.sql.functions import avg, coalesce, datediff, lit, to_date, udf, col, when, year
 from pyspark.sql.types import IntegerType
+from pyspark import StorageLevel
 import pandas as pd
 import sys
 
@@ -89,12 +90,14 @@ if __name__ == '__main__':
     # which will likely cause an out of memory exception with the full data
     spark = SparkSession.builder \
             .master(f'local[{args.num_workers}]') \
-            .config("spark.driver.memory", "16g") \
+            .config("spark.driver.memory", "32g") \
+            .config("spark.sql.shuffle.partitions", str(max(args.num_workers * 4, 64))) \
             .getOrCreate()
     
     # read the CSV file into a pyspark.sql dataframe and compute the things you need
     read_start = time.time()
-    df = spark.read.csv(args.filename, header=True, inferSchema=True)
+    df = spark.read.csv(args.filename, header=True, inferSchema=False)
+    df = df.select("STATION", "NAME", "DATE", "TMAX", "TMIN")
     df = df.withColumn(
         "DATE",
         coalesce(
@@ -102,10 +105,19 @@ if __name__ == '__main__':
             to_date(col("DATE").cast("string"), "yyyyMMdd"),
         ),
     )
-    df = df.withColumn("JDN", jdn(col("DATE")))
+    df = df.withColumn("JDN", datediff(col("DATE"), lit("1970-01-01")) + lit(2440588))
     df = df.withColumn("TAVG", (col("TMIN") + col("TMAX")) / 2)
     df = df.withColumn("YEAR", year(col("DATE")))
-    df = df.cache()
+    df = df.select("STATION", "NAME", "DATE", "JDN", "TAVG", "YEAR") \
+        .filter(
+            col("STATION").isNotNull()
+            & col("NAME").isNotNull()
+            & col("DATE").isNotNull()
+            & col("JDN").isNotNull()
+            & col("TAVG").isNotNull()
+            & col("YEAR").isNotNull()
+        ) \
+        .persist(StorageLevel.DISK_ONLY)
     record_count = df.count()
     read_end = time.time()
 

@@ -3,7 +3,8 @@
 #SBATCH --job-name=assignment4_p2d_full
 #SBATCH --output=assignment4_problem2d_full.out
 #SBATCH --error=assignment4_problem2d_full.err
-#SBATCH --time=00:30:00
+#SBATCH --time=02:00:00
+#SBATCH --mem=64G
 
 set -euo pipefail
 
@@ -22,6 +23,7 @@ if [[ "${1:-}" != "--run" ]]; then
       --parsable \
       --job-name="a4_p2d_full_w${WORKERS}" \
       --cpus-per-task="$WORKERS" \
+      --mem=64G \
       --output="${RESULT_DIR}/full_workers_${WORKERS}.slurm.out" \
       --error="${RESULT_DIR}/full_workers_${WORKERS}.slurm.err" \
       --export=ALL,ASSIGNMENT4_DIR="$SCRIPT_DIR",RESULT_DIR="$RESULT_DIR",DATASET_PATH="$DATASET_PATH",CONTAINER="$CONTAINER",WORKERS="$WORKERS" \
