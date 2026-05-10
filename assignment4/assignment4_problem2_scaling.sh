@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --job-name=assignment4_p2
-#SBATCH --time=01:00:00
+#SBATCH --time=00:30:00
 
 set -euo pipefail
 
