@@ -93,6 +93,7 @@ if __name__ == '__main__':
             .getOrCreate()
     
     # read the CSV file into a pyspark.sql dataframe and compute the things you need
+    read_start = time.time()
     df = spark.read.csv(args.filename, header=True, inferSchema=True)
     df = df.withColumn(
         "DATE",
@@ -104,7 +105,11 @@ if __name__ == '__main__':
     df = df.withColumn("JDN", jdn(col("DATE")))
     df = df.withColumn("TAVG", (col("TMIN") + col("TMAX")) / 2)
     df = df.withColumn("YEAR", year(col("DATE")))
+    df = df.cache()
+    record_count = df.count()
+    read_end = time.time()
 
+    compute_start = time.time()
     slopes_schema = "STATION string, NAME string, BETA double"
     slopes = df.groupBy("STATION", "NAME") \
         .applyInPandas(lsq, schema=slopes_schema) \
@@ -158,6 +163,7 @@ if __name__ == '__main__':
     else:
         positive_tdiff_fraction = 0.0
         tdiff_min, tdiff_q1, tdiff_median, tdiff_q3, tdiff_max = 5 * [0.0]
+    compute_end = time.time()
 
     # top 5 slopes are printed here
     # replace None with your dataframe, list, or an appropriate expression
@@ -212,5 +218,15 @@ if __name__ == '__main__':
     # It may be interesting to also record more fine-grained times (e.g., how 
     # much time was spent computing vs. reading data)
     total_time = time.time() - start
+    read_time = read_end - read_start
+    compute_time = compute_end - compute_start
+    measured_time = read_time + compute_time
+    read_fraction = read_time / measured_time if measured_time > 0 else 0.0
+    compute_fraction = compute_time / measured_time if measured_time > 0 else 0.0
     print(f'num workers: {args.num_workers}')
-    print(f'total time: {total_time:0.1f} s')
+    print(f'records: {record_count}')
+    print(f'read time: {read_time:0.6f} s')
+    print(f'compute time: {compute_time:0.6f} s')
+    print(f'read fraction: {read_fraction:0.6f}')
+    print(f'compute fraction: {compute_fraction:0.6f}')
+    print(f'total time: {total_time:0.6f} s')
