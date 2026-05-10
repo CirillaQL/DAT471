@@ -97,7 +97,13 @@ if __name__ == '__main__':
     # read the CSV file into a pyspark.sql dataframe and compute the things you need
     read_start = time.time()
     df = spark.read.csv(args.filename, header=True, inferSchema=False)
-    df = df.select("STATION", "NAME", "DATE", "TMAX", "TMIN")
+    df = df.select(
+        "STATION",
+        "NAME",
+        "DATE",
+        col("TMAX").cast("double").alias("TMAX"),
+        col("TMIN").cast("double").alias("TMIN"),
+    )
     df = df.withColumn(
         "DATE",
         coalesce(
