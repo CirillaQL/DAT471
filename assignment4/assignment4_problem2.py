@@ -165,6 +165,39 @@ if __name__ == '__main__':
         tdiff_min, tdiff_q1, tdiff_median, tdiff_q3, tdiff_max = 5 * [0.0]
     compute_end = time.time()
 
+    print('Top 5 coefficients table:')
+    print('| rank | station | name | beta (°F/day) |')
+    print('| ---: | --- | --- | ---: |')
+    for rank, row in enumerate(top5_slopes, start=1):
+        print(f'| {rank} | {row.STATION} | {row.NAME} | {row.BETA:0.6e} |')
+
+    print('BETA five-number summary table:')
+    print('| statistic | value (°F/day) |')
+    print('| --- | ---: |')
+    print(f'| min | {beta_min:0.6e} |')
+    print(f'| Q1 | {beta_q1:0.6e} |')
+    print(f'| median | {beta_median:0.6e} |')
+    print(f'| Q3 | {beta_q3:0.6e} |')
+    print(f'| max | {beta_max:0.6e} |')
+
+    print('Top 5 decade temperature differences table:')
+    print('| rank | station | name | difference (°C) |')
+    print('| ---: | --- | --- | ---: |')
+    if tdiff_count == 0:
+        print('| - | no matching stations | - | - |')
+    else:
+        for rank, row in enumerate(top5_differences, start=1):
+            print(f'| {rank} | {row.STATION} | {row.NAME} | {row.TAVGDIFF:0.3f} |')
+
+    print('Decade temperature difference five-number summary table:')
+    print('| statistic | value (°C) |')
+    print('| --- | ---: |')
+    print(f'| min | {tdiff_min:0.3f} |')
+    print(f'| Q1 | {tdiff_q1:0.3f} |')
+    print(f'| median | {tdiff_median:0.3f} |')
+    print(f'| Q3 | {tdiff_q3:0.3f} |')
+    print(f'| max | {tdiff_max:0.3f} |')
+
     # top 5 slopes are printed here
     # replace None with your dataframe, list, or an appropriate expression
     # replace STATIONCODE, STATIONNAME, and BETA with appropriate expressions
