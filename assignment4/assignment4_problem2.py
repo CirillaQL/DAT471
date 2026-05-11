@@ -111,7 +111,7 @@ if __name__ == '__main__':
             to_date(col("DATE").cast("string"), "yyyyMMdd"),
         ),
     )
-    df = df.withColumn("JDN", datediff(col("DATE"), lit("1970-01-01")) + lit(2440588))
+    df = df.withColumn("JDN", jdn(col("DATE")))
     df = df.withColumn("TAVG", (col("TMIN") + col("TMAX")) / 2)
     df = df.withColumn("YEAR", year(col("DATE")))
     df = df.select("STATION", "NAME", "DATE", "JDN", "TAVG", "YEAR") \
@@ -183,6 +183,7 @@ if __name__ == '__main__':
         tdiff_min, tdiff_q1, tdiff_median, tdiff_q3, tdiff_max = 5 * [0.0]
     compute_end = time.time()
 
+    # print tables for the results
     print('Top 5 coefficients table:')
     print('| rank | station | name | beta (°F/day) |')
     print('| ---: | --- | --- | ---: |')
