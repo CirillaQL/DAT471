@@ -3,7 +3,7 @@
 #SBATCH --job-name=assignment5_p3
 #SBATCH --output=assignment5_problem3.out
 #SBATCH --error=assignment5_problem3.err
-#SBATCH --time=12:00:00
+#SBATCH --time=00:30:00
 
 set -euo pipefail
 

@@ -122,6 +122,20 @@ def get_files(path):
                     yield f.read()
 
 
+def get_filenames(path):
+    """Iterate through all .txt filenames under path."""
+    for (root, dirs, files) in os.walk(path):
+        for file in files:
+            if file.endswith('.txt'):
+                yield f'{root}/{file}'
+
+
+def get_words_from_file(path):
+    """Read one file on a Spark worker and return its whitespace-separated words."""
+    with open(path, 'r') as f:
+        return f.read().split()
+
+
 def alpha(m):
     """Auxiliary function: bias correction"""
     if m == 16:
@@ -191,19 +205,23 @@ if __name__ == '__main__':
     sc = SparkContext(conf=conf)
 
     try:
-        data = sc.parallelize(get_files(path))
+        filenames = list(get_filenames(path))
+        if not filenames:
+            E = 0.0
+        else:
+            data = sc.parallelize(filenames, max(num_workers, len(filenames)))
 
-        register_pairs = (data
-                          .flatMap(lambda content: content.split())
-                          .map(lambda word: compute_jr(word, seed, log2m))
-                          .reduceByKey(max)
-                          .collect())
+            register_pairs = (data
+                              .flatMap(get_words_from_file)
+                              .map(lambda word: compute_jr(word, seed, log2m))
+                              .reduceByKey(max)
+                              .collect())
 
-        registers = [0] * m
-        for j, r in register_pairs:
-            registers[j] = r
+            registers = [0] * m
+            for j, r in register_pairs:
+                registers[j] = r
 
-        E = estimate_cardinality(registers)
+            E = estimate_cardinality(registers)
     finally:
         sc.stop()
 
