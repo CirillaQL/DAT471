@@ -7,7 +7,7 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="${ASSIGNMENT5_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
+SCRIPT_DIR="${ASSIGNMENT5_DIR:-${SLURM_SUBMIT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}}"
 SCRIPT_PATH="${SCRIPT_DIR}/problem1.py"
 RESULT_DIR="${RESULT_DIR:-${SCRIPT_DIR}/assignment5_problem1b_results}"
 DATASET_PATH="${DATASET_PATH:-/data/courses/2026_dat471_dit066/datasets/words}"
