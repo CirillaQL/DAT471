@@ -204,7 +204,7 @@ if __name__ == '__main__':
     conf.set('spark.driver.memory', '16g')
     sc = SparkContext(conf=conf)
 
-    num_partitions = num_workers * 4
+    num_partitions = num_workers * 16
 
     try:
         filenames = list(get_filenames(path))
