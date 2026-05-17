@@ -204,12 +204,14 @@ if __name__ == '__main__':
     conf.set('spark.driver.memory', '16g')
     sc = SparkContext(conf=conf)
 
+    num_partitions = num_workers * 4
+
     try:
         filenames = list(get_filenames(path))
         if not filenames:
             E = 0.0
         else:
-            data = sc.parallelize(filenames, max(num_workers, len(filenames)))
+            data = sc.parallelize(filenames, num_partitions)
 
             register_pairs = (data
                               .flatMap(get_words_from_file)
