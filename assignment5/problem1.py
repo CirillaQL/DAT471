@@ -16,11 +16,9 @@ def murmur3_32(key, seed):
 
     h1 = seed & 0xFFFFFFFF
 
-    # ── Process body: 4-byte blocks ──────────────────
     nblocks = length // 4
     for i in range(nblocks):
         off = i * 4
-        # little-endian 4 bytes → uint32（纯位运算，不依赖 struct）
         k1 = (data[off]
               | (data[off + 1] << 8)
               | (data[off + 2] << 16)
@@ -34,7 +32,6 @@ def murmur3_32(key, seed):
         h1 = rol32(h1, 13)
         h1 = (h1 * 5 + 0xE6546B64) & 0xFFFFFFFF
 
-    # ── Process tail: remaining 1-3 bytes ────────────
     tail_start = nblocks * 4
     k1 = 0
     remaining = length - tail_start

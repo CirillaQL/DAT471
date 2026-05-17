@@ -21,7 +21,6 @@ def murmur3_32(key, seed):
     nblocks = length // 4
     for i in range(nblocks):
         off = i * 4
-        # little-endian 4 bytes → uint32（纯位运算，不依赖 struct）
         k1 = (data[off]
               | (data[off + 1] << 8)
               | (data[off + 2] << 16)
@@ -94,7 +93,7 @@ def compute_jr(key,seed,log2m):
     h = murmur3_32(key,seed)
     j = h & ((1 << log2m) - 1)
     remaining = h >> log2m
-    r = rho(remaining, 32 - log2m)
+    r = rho(remaining)
     return j, r
 
 
