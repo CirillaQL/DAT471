@@ -136,6 +136,29 @@ def get_words_from_file(path):
         return f.read().split()
 
 
+def iter_words_from_file(path):
+    """Yield whitespace-separated words without loading the whole file at once."""
+    with open(path, 'r') as f:
+        for line in f:
+            yield from line.split()
+
+
+def build_partition_registers(paths, seed, log2m, m):
+    """Compute one HyperLogLog register array for a Spark partition."""
+    registers = [0] * m
+    for path in paths:
+        for word in iter_words_from_file(path):
+            j, r = compute_jr(word, seed, log2m)
+            if r > registers[j]:
+                registers[j] = r
+    return [registers]
+
+
+def merge_registers(left, right):
+    """Merge two HyperLogLog register arrays."""
+    return [max(a, b) for a, b in zip(left, right)]
+
+
 def alpha(m):
     """Auxiliary function: bias correction"""
     if m == 16:
@@ -213,15 +236,12 @@ if __name__ == '__main__':
         else:
             data = sc.parallelize(filenames, num_partitions)
 
-            register_pairs = (data
-                              .flatMap(get_words_from_file)
-                              .map(lambda word: compute_jr(word, seed, log2m))
-                              .reduceByKey(max)
-                              .collect())
-
-            registers = [0] * m
-            for j, r in register_pairs:
-                registers[j] = r
+            # avoid too much data shuffling by computing one register array per partition
+            registers = (data
+                         .mapPartitions(
+                             lambda paths: build_partition_registers(
+                                 paths, seed, log2m, m))
+                         .treeReduce(merge_registers))
 
             E = estimate_cardinality(registers)
     finally:
