@@ -92,8 +92,7 @@ def compute_jr(key,seed,log2m):
     """
     h = murmur3_32(key,seed)
     j = h & ((1 << log2m) - 1)
-    remaining = h >> log2m
-    r = rho(remaining)
+    r = rho(h)
     return j, r
 
 
